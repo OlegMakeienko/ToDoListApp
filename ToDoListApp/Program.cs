@@ -21,13 +21,13 @@ public class Program
             switch (option)
             {
                 case "1":
-                    toDoList.GetTasksByDate();
+                    toDoList.DisplayTasksByDate();
                     break;
                 case "2":
                     toDoList.AddTask();
                     break;
                 case "3":
-                    // Här ska jag ändra Task
+                    toDoList.EditTask();
                     break;
                 case "4":
                     // Här sparar jag alla ändringar och Quit

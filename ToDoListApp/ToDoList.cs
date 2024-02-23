@@ -9,19 +9,58 @@ public class ToDoList
         tasks.Remove(task);
     }
 
-    public void MarkTaskAsDone(Task task)
+    public void EditTask()
     {
-        task.IsDone = true;
+        Console.WriteLine("Enter the title of the task you want to edit:");
+        string title = Console.ReadLine();
+
+        Task taskToEdit = tasks.FirstOrDefault(t => t.Title == title);
+
+        if (taskToEdit != null)
+        {
+            Console.WriteLine("Enter new task title:");
+            string newTitle = Console.ReadLine();
+            taskToEdit.Title = newTitle;
+
+            Console.WriteLine("Enter new due date (yyyy-mm-dd):");
+            DateTime newDueDate = DateTime.Parse(Console.ReadLine());
+            taskToEdit.DueDate = newDueDate;
+
+            Console.WriteLine("Enter new project:");
+            string newProject = Console.ReadLine();
+            taskToEdit.Project = newProject;
+
+            Console.WriteLine("Mark as done? (yes/no):");
+            string done = Console.ReadLine();
+            taskToEdit.IsDone = done.ToLower() == "yes";
+
+            Console.WriteLine("Task updated successfully!");
+        }
+        else
+        {
+            Console.WriteLine("Task not found.");
+        }
     }
 
-    public List<Task> GetTasksByDate()
+    public void DisplayTasksByDate()
     {
-        return tasks.OrderBy(t => t.DueDate).ToList();
+        var orderedTasks = tasks.OrderBy(t => t.DueDate).ToList();
+
+        foreach (var task in orderedTasks)
+        {
+            Console.WriteLine("Title: {0}, Due Date: {1}, Project: {2}, Is Done: {3}", task.Title, task.DueDate, task.Project, task.IsDone ? "Yes" : "No");
+        }
     }
 
-    public List<Task> GetTasksByProject()
+
+    public void DisplayTasksByProject()
     {
-        return tasks.OrderBy(t => t.Project).ToList();
+        var orderedTasks = tasks.OrderBy(t => t.Project).ToList();
+        
+        foreach (var task in orderedTasks)
+        {
+            Console.WriteLine("Title: {0}, Due Date: {1}, Project: {2}, Is Done: {3}", task.Title, task.DueDate, task.Project, task.IsDone ? "Yes" : "No");
+        }
     }
     
     public int GetToDoTaskCount()
