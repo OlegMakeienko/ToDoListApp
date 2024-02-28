@@ -1,36 +1,44 @@
+using System.Text.Json;
+
 namespace ToDoListApp;
 
 public class ToDoList
 {
     private List<Task> tasks = new List<Task>();
+    
+    public List<Task> GetAllTasks()
+    {
+        return tasks;
+    }
 
     public void RemoveTask(Task task)
     {
         tasks.Remove(task);
+        ColoredTextInConsole.WriteLine("Task deleted\n", ConsoleColor.Green);
     }
 
     public void EditTask()
     {
-        Console.WriteLine("Enter the title of the task you want to edit:");
+        ColoredTextInConsole.WriteLine("Enter the title of the task you want to edit:", ConsoleColor.Cyan);
         string title = Console.ReadLine();
 
         Task taskToEdit = tasks.FirstOrDefault(t => t.Title == title);
 
         if (taskToEdit != null)
         {
-            Console.WriteLine("Enter new task title:");
+            ColoredTextInConsole.WriteLine("Enter new task title:", ConsoleColor.Cyan);
             string newTitle = Console.ReadLine();
             taskToEdit.Title = newTitle;
 
-            Console.WriteLine("Enter new due date (yyyy-mm-dd):");
+            ColoredTextInConsole.WriteLine("Enter new due date (yyyy-mm-dd):", ConsoleColor.Cyan);
             DateTime newDueDate = DateTime.Parse(Console.ReadLine());
             taskToEdit.DueDate = newDueDate;
 
-            Console.WriteLine("Enter new project:");
+            ColoredTextInConsole.WriteLine("Enter new project:", ConsoleColor.Cyan);
             string newProject = Console.ReadLine();
             taskToEdit.Project = newProject;
 
-            Console.WriteLine("Mark as done? (yes/no):");
+            ColoredTextInConsole.WriteLine("Mark as done? (yes/no):", ConsoleColor.Red);
             string done = Console.ReadLine();
             taskToEdit.IsDone = done.ToLower() == "yes";
 
@@ -38,10 +46,38 @@ public class ToDoList
         }
         else
         {
-            Console.WriteLine("Task not found.");
+            ColoredTextInConsole.WriteLine("Task not found.", ConsoleColor.Red);
         }
     }
 
+    public void DisplayAllTasks(List<Task> displayList)
+    {
+        ColoredTextInConsole.WriteLine("TITLE:".PadRight(24) + "PROJECT:".PadRight(16) + "DUE DATE:".PadRight(16) + "STATUS:",
+            ConsoleColor.DarkBlue);
+
+        foreach (Task task in displayList)
+        {
+            string statusString;
+            if (task.IsDone)
+            {
+                statusString = "Completed";
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
+            }
+            else if (task.DueDate < DateTime.Now)
+            {
+                statusString = "In progress!";
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+            }
+            else statusString = "";
+                
+            Console.WriteLine(task.Title.PadRight(24)
+                              + task.Project.PadRight(16)
+                              + task.DueDate.ToString("d").PadRight(16)
+                              + statusString);
+            Console.ResetColor();
+        }
+        Console.WriteLine("");
+    }
     public void DisplayTasksByDate()
     {
         var orderedTasks = tasks.OrderBy(t => t.DueDate).ToList();
@@ -88,5 +124,19 @@ public class ToDoList
         tasks.Add(newTask);
 
         Console.WriteLine("Task added successfully!");
+    }
+    public void SaveTasksToFile(string filePath)
+    {
+        var json = JsonSerializer.Serialize(tasks);
+        File.WriteAllText(filePath, json);
+    }
+
+    public void LoadTasksFromFile(string filePath)
+    {
+        if (File.Exists(filePath))
+        {
+            var json = File.ReadAllText(filePath);
+            tasks = JsonSerializer.Deserialize<List<Task>>(json);
+        }
     }
 }

@@ -7,11 +7,12 @@ public class Program
     static void Main(string[] args)
     {
         ToDoList toDoList = new ToDoList();
+        toDoList.LoadTasksFromFile("tasks.json");
         while (true)
         {
-            Console.WriteLine("Welcome to ToDoLy");
+            ColoredTextInConsole.WriteLine("Welcome to ToDoLy", ConsoleColor.Cyan);
             Console.WriteLine("You have {0} tasks todo and {1} tasks are done!", toDoList.GetToDoTaskCount(), toDoList.GetDoneTaskCount());
-            Console.WriteLine("Pick an option:");
+            ColoredTextInConsole.WriteLine("Pick an option:", ConsoleColor.Cyan);
             Console.WriteLine("(1) Show Task List (by date or project)");
             Console.WriteLine("(2) Add New Task");
             Console.WriteLine("(3) Edit Task (update, mark as done, remove)");
@@ -21,7 +22,7 @@ public class Program
             switch (option)
             {
                 case "1":
-                    toDoList.DisplayTasksByDate();
+                    toDoList.DisplayAllTasks(toDoList.GetAllTasks());
                     break;
                 case "2":
                     toDoList.AddTask();
@@ -30,8 +31,8 @@ public class Program
                     toDoList.EditTask();
                     break;
                 case "4":
-                    // Här sparar jag alla ändringar och Quit
-                    break;
+                    toDoList.SaveTasksToFile("tasks.json");
+                    return;
                 default:
                     Console.WriteLine("Invalid option. Please try again.");
                     break;
